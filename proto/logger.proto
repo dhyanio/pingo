@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pingo;
+
+option go_package = "github.com/dhyanio/pingo/proto;proto";
+
+// Contains task_id, message, timestamp
+message LogEntry {
+    string task_id = 1;
+    string message = 2;
+    int64 timestamp = 3;
+}
+
+// Just a success boolean
+message LogAck {
+    bool success = 1;
+}
+
+service LoggerService {
+    // Worker streams log entries
+    rpc Log(stream LogEntry) returns (LogAck);
+}

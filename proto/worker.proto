@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package pingo;
+
+option go_package = "github.com/dhyanio/pingo/proto;proto";
+
+import "google/protobuf/timestamp.proto";
+
+// Contains worker_id, address, and capabilities
+message WorkerInfo {
+	string worker_id = 1;
+	string address = 2;
+	repeated string capabilities = 3;
+}
+
+// Sent from worker to scheduler - includes status update on a task
+message WorkerUpdate {
+	string worker_id = 1;
+	string task_id = 2;
+	string status = 3;  //"RUNNING", "SUCCESS", "FAILED"
+	string log = 4;
+	google.protobuf.Timestamp timestamp = 5;
+}
+
+// Send from scheduler to worker - tells what to execute
+message TaskCommand {
+	string task_id = 1;
+	string commnad = 2;
+	int32 priority = 3; // Lower number = higher priority
+}
+
+// scheduler can assign a task to a specific worker manually
+message AddTaskRequest {
+	string worker_id = 1;
+	TaskCommand task = 2;
+}
+
+message AddTaskResponse {}
+
+service WorkerService {
+	rpc StreamTasks(stream WorkerUpdate) returns (stream TaskCommand);
+	rpc AddTask(AddTaskRequest) returns (AddTaskResponse);
+}

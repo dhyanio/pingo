@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pingo;
+
+option go_package = "github.com/dhyanio/pingo/proto;proto";
+
+// Clinets submit a task (task_id + commnad)
+message SubmitTaskRequest {
+    string task_id = 1;
+    string commnad = 2;
+}
+
+// Acknowledges the submission
+message SubmitTaskResponse {
+    bool success = 1;
+}
+
+service TaskManager {
+    rpc SubmitTask(SubmitTaskRequest) returns (SubmitTaskResponse);
+}
