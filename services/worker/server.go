@@ -88,7 +88,8 @@ func (s *workerServer) StreamTasks(stream pb.WorkerService_StreamTasksServer) er
 
 	return nil
 }
-func (s *workerServer) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskRequest, error) {
+
+func (s *workerServer) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb.AddTaskResponse, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -99,7 +100,7 @@ func (s *workerServer) AddTask(ctx context.Context, req *pb.AddTaskRequest) (*pb
 	s.taskQueues[req.WorkerId] = append(s.taskQueues[req.WorkerId], req.Task)
 	log.Printf("Task %s queued for worker %s", req.Task.TaskId, req.WorkerId)
 
-	return &pb.AddTaskRequest{}, nil
+	return &pb.AddTaskResponse{}, nil
 }
 func main() {
 	conn, err := grpc.NewClient("localhost:50053", grpc.WithTransportCredentials(insecure.NewCredentials()))
